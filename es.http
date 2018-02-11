@@ -1,0 +1,9 @@
+GET  http://localhost:8080
+
+###
+GET   http://localhost:8080/get/book/novel?id=123
+
+###
+GET   http://localhost:8080/add/book/novel?name='m'&title='r'&wordCount='xxx'&publishingDate='1518169537'
+
+###
