@@ -39,7 +39,7 @@ public class ESXController {
     @GetMapping("/getbookById")
     public String getBookById(String id) {
         if (id != null && !id.isEmpty()) {
-            GetResponse result = client.prepareGet("book", "novel", id).get();
+            GetResponse result = client.prepareGet("index", "fulltext", id).get();
             System.err.println(JSON.toJSONString(result));
             System.err.println("--------------------");
             return result.getSourceAsString();
