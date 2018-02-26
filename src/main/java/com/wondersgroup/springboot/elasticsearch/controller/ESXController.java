@@ -1,17 +1,23 @@
 package com.wondersgroup.springboot.elasticsearch.controller;
 
 import com.alibaba.fastjson.JSON;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -83,6 +89,41 @@ public class ESXController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity deleteBook() {
+//        DeleteResponse deleteResponse = this.client.prepareDelete("index", "fulltext", "_search -H").get();
+        DeleteRequestBuilder deleteResponse = this.client.prepareDelete();
+//        deleteResponse = this.client.prepareDelete("index", "fulltext", "2 -d").get();
+//        deleteResponse = this.client.prepareDelete("index", "fulltext", "3 -d").get();
+//        deleteResponse = this.client.prepareDelete("index", "fulltext", "4 -d").get();
+//        deleteResponse = this.client.prepareDelete("index", "fulltext", "1 -d").get();
+
+
+        return null;
+//        return new ResponseEntity(deleteResponse.getResult().toString(), HttpStatus.OK);
+    }
+
+    @GetMapping("/index")
+    public void findBook() {
+        SearchResponse response = client.prepareSearch().execute().actionGet();// 获取全部
+        System.err.println(response);
+    }
+
+    @GetMapping("serch")
+    public void searchRequest() {
+        SearchRequestBuilder searchRequestBuilder = client.prepareSearch("book").setFrom(0).setSize(100);
+
+        //执行查询
+        SearchResponse response = searchRequestBuilder.execute().actionGet();
+        SearchHits searchHits = response.getHits();
+        System.out.println("总数：" + searchHits.getTotalHits());
+        SearchHit[] hits = searchHits.getHits();
+        for (SearchHit hit : hits) {
+            String json = hit.getSourceAsString();
+            System.err.println(json);
+        }
     }
 
 

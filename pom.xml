@@ -23,7 +23,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<!-- springboot 默认版本为2.4.6 这里需要指定和你es服务器一样的版本进行覆盖 -->
-		<elasticsearch.version>6.1.2</elasticsearch.version>
+		<elasticsearch.version>6.2.1</elasticsearch.version>
 
 	</properties>
 
