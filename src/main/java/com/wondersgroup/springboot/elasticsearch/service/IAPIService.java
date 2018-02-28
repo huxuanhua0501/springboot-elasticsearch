@@ -19,4 +19,8 @@ public interface IAPIService {
 
     public String searchRresponse();
 
+    public void testScrolls();
+
+    public void multiSearch();
+
 }

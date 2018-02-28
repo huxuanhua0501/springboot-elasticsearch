@@ -39,4 +39,14 @@ public class APIController {
     public String searchRresponse() {
         return apiService.searchRresponse();
     }
+
+    @GetMapping("/scroll")
+    public void testScrolls() {
+        apiService.testScrolls();
+    }
+
+    @GetMapping("/multi")
+    public void multiSearch() {
+        apiService.multiSearch();
+    }
 }
