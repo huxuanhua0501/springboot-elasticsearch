@@ -23,4 +23,7 @@ public interface IAPIService {
 
     public void multiSearch();
 
+    public void terminate();
+    public  void getFang();
+
 }

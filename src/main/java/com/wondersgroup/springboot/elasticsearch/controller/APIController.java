@@ -49,4 +49,12 @@ public class APIController {
     public void multiSearch() {
         apiService.multiSearch();
     }
+    @GetMapping("/aggre")
+    public void aggregations() {
+        apiService.terminate();
+    }
+    @GetMapping("/getFang")
+    public  void getFang() {
+        apiService.getFang();
+    }
 }

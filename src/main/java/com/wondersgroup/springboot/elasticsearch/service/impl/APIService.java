@@ -1,7 +1,13 @@
 package com.wondersgroup.springboot.elasticsearch.service.impl;
 
+import cn.edu.hfut.dmic.webcollector.model.CrawlDatums;
+import cn.edu.hfut.dmic.webcollector.model.Page;
+import cn.edu.hfut.dmic.webcollector.plugin.berkeley.BreadthCrawler;
 import com.alibaba.fastjson.JSON;
 import com.wondersgroup.springboot.elasticsearch.service.IAPIService;
+import com.wondersgroup.springboot.elasticsearch.util.CSDNCrawler;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.Terms;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -14,6 +20,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.engine.Engine;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
@@ -22,8 +29,13 @@ import org.elasticsearch.index.reindex.ScrollableHitSource;
 import org.elasticsearch.index.search.MultiMatchQuery;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.security.x509.InvalidityDateExtension;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -32,7 +44,7 @@ import java.util.*;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 @Service
-public class APIService implements IAPIService {
+public class APIService  implements IAPIService {
     @Autowired
     TransportClient client;
 
@@ -63,8 +75,8 @@ public class APIService implements IAPIService {
     @Override
     public long delete1() {
         BulkByScrollResponse response = DeleteByQueryAction.INSTANCE.newRequestBuilder(client)
-                .filter(QueryBuilders.matchQuery("message", "java"))//查询条件
-                .source("huxuanhua")//索引
+//                .filter(QueryBuilders.matchQuery("message", "java"))//查询条件
+                .source("hourse")//索引
                 .get();
         long deleted = response.getDeleted();//删除文档的数量
         return deleted;
@@ -183,6 +195,38 @@ public class APIService implements IAPIService {
             for (SearchHit searchHit : hit) {
                 System.err.println(searchHit.getSourceAsString());
             }
+        }
+    }
+
+    /**
+     * 如果达到这个数量，提前终止
+     */
+    @Override
+    public void terminate () {
+        SearchResponse response = client.prepareSearch("index")
+                .setTerminateAfter(2)
+                .get();
+        if (response.isTerminatedEarly()) {
+            System.err.println(response);
+        }
+
+    }
+
+
+
+
+
+    @Override
+    public void getFang() {
+        CSDNCrawler crawler = new CSDNCrawler("path", true);
+        crawler.setThreads(50);
+//        crawler.setTopN(100);
+        //crawler.setResumable(true);
+        /*start crawl with depth 3*/
+        try {
+            crawler.start(3);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
